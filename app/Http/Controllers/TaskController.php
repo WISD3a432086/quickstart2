@@ -19,8 +19,6 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
-        $tasks = Task::where('user_id', $request->user()->id)->get();
-
         return view('tasks.index', [
             'tasks' => $tasks,
         ]);
@@ -42,6 +40,22 @@ class TaskController extends Controller
         $request->user()->tasks()->create([
             'name' => $request->name,
         ]);
+
+        return redirect('/tasks');
+    }
+
+    /**
+     * 移除給定的任務。
+     *
+     * @param  Request  $request
+     * @param  Task  $task
+     * @return Response
+     */
+    public function destroy(Request $request, Task $task)
+    {
+        $this->authorize('destroy', $task);
+
+        $task->delete();
 
         return redirect('/tasks');
     }
